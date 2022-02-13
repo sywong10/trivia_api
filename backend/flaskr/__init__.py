@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request, abort, jsonify
+from flask import Flask, request, abort, jsonify, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 import random
@@ -22,11 +22,12 @@ def create_app(test_config=None):
   # create and configure the app
   app = Flask(__name__)
   setup_db(app)
+  CORS(app, resources={r"/*": {"origins": "*"}})
 
   '''
   @TODO: Set up CORS. Allow '*' for origins. Delete the sample route after completing the TODOs
   '''
-  CORS(app, resources={r"/api/*": {"origins": "*"}})
+
 
   '''
   @TODO: Use the after_request decorator to set Access-Control-Allow
@@ -88,10 +89,11 @@ def create_app(test_config=None):
       abort(404)
 
     return jsonify({
+      'success': True,
       'questions': current_questions,
-      'total_questions': len(selection),
       'categories': get_category_list(),
-      'current_category': currentCategory
+      'total_questions': len(selection),
+      'current_category': None
     })
 
   '''
@@ -101,6 +103,33 @@ def create_app(test_config=None):
   TEST: When you click the trash icon next to a question, the question will be removed.
   This removal will persist in the database and when you refresh the page. 
   '''
+
+  @app.route('/questions/<question_id>', methods=['DELETE'])
+  def delete_question(question_id):
+
+    delete_question = Question.query.filter_by(id=question_id).first()
+
+    if not delete_question:
+      abort(404)
+
+    try:
+      Question.delete(delete_question)
+      db.session.commit()
+    except:
+      db.session.rollback()
+
+    return jsonify({
+      'id': qustion_id,
+      'success': True
+    }), 200
+
+
+
+
+
+
+
+
 
   '''
   @TODO: 
