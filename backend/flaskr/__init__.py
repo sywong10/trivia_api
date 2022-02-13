@@ -117,6 +117,8 @@ def create_app(test_config=None):
       db.session.commit()
     except:
       db.session.rollback()
+    finally:
+      db.session.close()
 
     return jsonify({
       'id': qustion_id,
