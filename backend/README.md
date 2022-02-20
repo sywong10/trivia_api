@@ -100,6 +100,125 @@ GET '/api/v1.0/categories'
 
 ```
 
+  @app.route('/categories', methods=['GET'])
+
+GET 'categories'
+- Fetch a dictionary of categories, in which key = category id, value = category
+- Request Arguments: None
+- Returns:  a categories dictionary in which key is category id, value is category name
+
+
+
+@app.route('/questions', methods=['GET', 'POST'])
+GET '/questions'
+- Fetch a dictionary about questions, including total number of questions, a list of paginated dictionary (default is 10) about each question 
+  and a dictionary about questions categories.
+- Returns a dictionary which contains:
+  - a dictionary of categories, with category id as dictionary key and category name as dictionary value
+  - a list of questions in dictionary.  containing 10 dictionary of questions in each paginated page
+  - a number of total questions
+
+
+POST '/questions'
+- $ curl -X POST -H "Content-Type: application/json" http://localhost:5000/questions -d '{"question":"new question", "answer":"new answer", "category": "2", "difficulty":"2"}'
+- Post, add a new question
+- Argument: the endpoint takes question, answer, category id and difficulty
+- Return an object of newly added question id and question category id 
+  {
+    "created": 32,
+    "questions category": 2,
+    "success": true
+   }
+
+
+@app.route('/questions/<question_id>', methods=['DELETE'])
+DELETE '/questions/<question_id>'
+- $ curl -X DELETE -H "Content-Type: application/json" http://localhost:5000/questions/32
+- remove a question
+- Return object contains question id of removed question
+  {
+    "id": "32",
+    "success": true
+  }
+
+
+@app.route('/questions/search', methods=['POST'])
+POST '/questions/search'
+- $ curl -X POST -H "Content-Type: application/json" http://localhost:5000/questions/search -d '{"searchTerm":"who"}'
+- Argument, the endpoint takes argument of a case insensitive search string
+- Return an object including a list of question dictionary and total number of questions that contain search term.
+  {
+    "current_category": null,
+    "questions": [
+      {
+        "answer": "George Washington Carver",
+        "category": 4,
+        "difficulty": 2,
+        "id": 12,
+        "question": "Who invented Peanut Butter?"
+      },
+      {
+        "answer": "Alexander Fleming",
+        "category": 1,
+        "difficulty": 3,
+        "id": 21,
+        "question": "Who discovered penicillin?"
+      }
+    ],
+    "success": true,
+    "total_questions": 2
+  }
+
+
+@app.route('/categories/<int:id>/questions', methods=['GET'])
+GET '/categories/<id>/questions'
+- $ curl http://localhost:5000/categories/4/questions
+- the endpoint takes category ID of interested category, it retrieves questions by category ID
+- return an object that includes selected category name, total number of questions in this category and an array of question dictionaries in this category.
+  {
+    "current_category": "History",
+    "questions": [
+      {
+        "answer": "George Washington Carver",
+        "category": 4,
+        "difficulty": 2,
+        "id": 12,
+        "question": "Who invented Peanut Butter?"
+      },
+      {
+        "answer": "Scarab",
+        "category": 4,
+        "difficulty": 4,
+        "id": 23,
+        "question": "Which dung beetle was worshipped by the ancient Egyptians?"
+      }
+    ],
+    "success": true,
+    "total_questions": 2
+  }
+
+
+@app.route('/quizzes', methods=['POST'])
+- POST '/quizzes' 
+
+- Request Body:
+  {
+    'previous_questions': [22, 20],
+    'quiz_category': a string of the current category
+  }
+
+- return the new question object
+  {
+    'question': {
+      'id': 22, 
+      'question': 'Hematology is a branch of medicine involving the study of what?', 
+      'answer': 'Blood', 
+      'category': 1, 
+      'difficulty': 4
+    }
+  }
+
+
 
 ## Testing
 To run the tests, run
