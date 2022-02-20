@@ -100,16 +100,16 @@ GET '/api/v1.0/categories'
 
 ```
 
-  @app.route('/categories', methods=['GET'])
+  
 
-GET 'categories'
+GET '/categories'
 - Fetch a dictionary of categories, in which key = category id, value = category
 - Request Arguments: None
 - Returns:  a categories dictionary in which key is category id, value is category name
 
 
 
-@app.route('/questions', methods=['GET', 'POST'])
+
 GET '/questions'
 - Fetch a dictionary about questions, including total number of questions, a list of paginated dictionary (default is 10) about each question 
   and a dictionary about questions categories.
@@ -117,6 +117,7 @@ GET '/questions'
   - a dictionary of categories, with category id as dictionary key and category name as dictionary value
   - a list of questions in dictionary.  containing 10 dictionary of questions in each paginated page
   - a number of total questions
+
 
 
 POST '/questions'
@@ -131,7 +132,8 @@ POST '/questions'
    }
 
 
-@app.route('/questions/<question_id>', methods=['DELETE'])
+
+
 DELETE '/questions/<question_id>'
 - $ curl -X DELETE -H "Content-Type: application/json" http://localhost:5000/questions/32
 - remove a question
@@ -142,7 +144,8 @@ DELETE '/questions/<question_id>'
   }
 
 
-@app.route('/questions/search', methods=['POST'])
+
+
 POST '/questions/search'
 - $ curl -X POST -H "Content-Type: application/json" http://localhost:5000/questions/search -d '{"searchTerm":"who"}'
 - Argument, the endpoint takes argument of a case insensitive search string
@@ -170,7 +173,8 @@ POST '/questions/search'
   }
 
 
-@app.route('/categories/<int:id>/questions', methods=['GET'])
+
+
 GET '/categories/<id>/questions'
 - $ curl http://localhost:5000/categories/4/questions
 - the endpoint takes category ID of interested category, it retrieves questions by category ID
@@ -198,9 +202,9 @@ GET '/categories/<id>/questions'
   }
 
 
-@app.route('/quizzes', methods=['POST'])
-- POST '/quizzes' 
 
+
+- POST '/quizzes'
 - Request Body:
   {
     'previous_questions': [22, 20],
