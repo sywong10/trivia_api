@@ -20,7 +20,25 @@ def pagination(request, selection):
 
 def create_app(test_config=None):
   # create and configure the app
-  app = Flask(__name__)
+
+  # try:
+  #   os.makedirs(app.instance_path)
+  # except OSError:
+  #   pass
+
+  app = Flask(__name__, instance_relative_config=True)
+  app.config.from_mapping(
+    SECRET_KEY='dev',
+    DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
+  )
+
+  try:
+    os.makedirs(app.instance_path)
+  except OSError:
+    pass
+
+
+
   setup_db(app)
   CORS(app, resources={r"/*": {"origins": "*"}})
 
@@ -43,7 +61,7 @@ def create_app(test_config=None):
     return jsonify({
       'Success': True,
       'categories': formatted_categories,
-      'total_categirues': len(categories)
+      'total_categories': len(categories)
     })
 
 
@@ -182,10 +200,10 @@ def create_app(test_config=None):
     if len(all_questions) != 0:
       question_to_ask = random.choice(all_questions)
 
-    print('id: {}'.format(category))
-    print('previous_questions: {}'.format(previous_questions))
-    print('question_to_ask: {}'.format(question_to_ask))
-    print('all_questions: {}'.format(all_questions))
+    # print('id: {}'.format(category))
+    # print('previous_questions: {}'.format(previous_questions))
+    # print('question_to_ask: {}'.format(question_to_ask))
+    # print('all_questions: {}'.format(all_questions))
 
     return jsonify({
       'Success': True,
@@ -203,7 +221,7 @@ def create_app(test_config=None):
   @app.errorhandler(404)
   def not_found(error):
     return jsonify({
-      "Success": False,
+      "success": False,
       "error": 404,
       "message": "resource not found"
     }), 404
