@@ -140,21 +140,42 @@ def create_app(test_config=None):
 
   @app.route('/questions/search', methods=['POST'])
   def search_question():
-    try:
-      data = request.get_json()
-      search_term = data.get('searchTerm', '')
+
+    data = request.get_json()
+    search_term = data.get('searchTerm', '')
+
+    if search_term:
       results = Question.query.filter(Question.question.ilike('%' + search_term + '%')).all()
       formatted_result_questions = [ search.format() for search in results ]
 
-      return jsonify ({
+      return jsonify({
         'success': True,
         'questions': formatted_result_questions,
         'total_questions': len(results),
         'current_category': None
       })
 
-    except:
-      abort(422)
+    else:
+      abort(404)
+      # results = Question.query.filter(Question.question.ilike('%' + search_term + '%')).all()
+      # formatted_result_questions = [search.format() for search in results]
+      #
+      # return jsonify({
+      #   'success': True,
+      #   'questions': formatted_result_questions,
+      #   'total_questions': len(results),
+      #   'current_category': None
+      # })
+
+      # abort(404)
+
+    # return jsonify ({
+    #   'success': True,
+    #   'questions': formatted_result_questions,
+    #   'total_questions': len(results),
+    #   'current_category': None
+    # })
+
 
 
 
@@ -184,18 +205,22 @@ def create_app(test_config=None):
     previous_questions = data.get('previous_questions')
     category = data.get('quiz_category')
 
-    if category.get('id', None) != 0:
-      selection = Question.query.filter(Question.category==category.get('id')).all()
-    else:
-      selection = Question.query.all()
+    try:
+      if category.get('id', None) != 0:
+        selection = Question.query.filter(Question.category==category.get('id')).all()
+      else:
+        selection = Question.query.all()
 
-    all_questions = [ question.format() for question in selection if question.id not in previous_questions]
+      all_questions = [ question.format() for question in selection if question.id not in previous_questions]
 
-    if len(all_questions) != 0:
-      question_to_ask = random.choice(all_questions)
+      if len(all_questions) != 0:
+        question_to_ask = random.choice(all_questions)
+
+    except:
+      abort(422)
 
     return jsonify({
-      'Success': True,
+      'success': True,
       'id': category,
       'question': question_to_ask
     })
@@ -218,7 +243,7 @@ def create_app(test_config=None):
   @app.errorhandler(422)
   def unprocessable_entity(error):
     return jsonify({
-      "Success": False,
+      "success": False,
       "error": 422,
       "message": "unprocessable_entity"
     }), 422
