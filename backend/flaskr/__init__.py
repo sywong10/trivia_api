@@ -143,9 +143,9 @@ def create_app(test_config=None):
 
     data = request.get_json()
     search_term = data.get('searchTerm', '')
+    results = Question.query.filter(Question.question.ilike('%' + search_term + '%')).all()
 
-    if search_term:
-      results = Question.query.filter(Question.question.ilike('%' + search_term + '%')).all()
+    if results:
       formatted_result_questions = [ search.format() for search in results ]
 
       return jsonify({
@@ -157,24 +157,7 @@ def create_app(test_config=None):
 
     else:
       abort(404)
-      # results = Question.query.filter(Question.question.ilike('%' + search_term + '%')).all()
-      # formatted_result_questions = [search.format() for search in results]
-      #
-      # return jsonify({
-      #   'success': True,
-      #   'questions': formatted_result_questions,
-      #   'total_questions': len(results),
-      #   'current_category': None
-      # })
 
-      # abort(404)
-
-    # return jsonify ({
-    #   'success': True,
-    #   'questions': formatted_result_questions,
-    #   'total_questions': len(results),
-    #   'current_category': None
-    # })
 
 
 
@@ -216,14 +199,20 @@ def create_app(test_config=None):
       if len(all_questions) != 0:
         question_to_ask = random.choice(all_questions)
 
+      return jsonify({
+        'success': True,
+        'id': category,
+        'question': question_to_ask
+      })
+
     except:
       abort(422)
 
-    return jsonify({
-      'success': True,
-      'id': category,
-      'question': question_to_ask
-    })
+    # return jsonify({
+    #   'success': True,
+    #   'id': category,
+    #   'question': question_to_ask
+    # })
 
 
 
