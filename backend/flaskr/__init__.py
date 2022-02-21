@@ -208,11 +208,6 @@ def create_app(test_config=None):
     except:
       abort(422)
 
-    # return jsonify({
-    #   'success': True,
-    #   'id': category,
-    #   'question': question_to_ask
-    # })
 
 
 
