@@ -46,6 +46,17 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(data['total_questions'])
 
 
+    def test_get_question_with_valid_page(self):
+        res = self.client().get('/questions?page=2')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertTrue(data['questions'])
+        self.assertTrue(data['categories'])
+        self.assertTrue(data['total_questions'])
+
+
     def test_get_questions_beyond_valid_page(self):
         res = self.client().get('/questions?page=1000')
         data = json.loads(res.data)
@@ -65,15 +76,78 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(data['total_categories'])
 
 
-    def test_delete_questions(self):
-        res = self.client().delete('/questions/9')
+    def test_list_questions_by_category_with_result(self):
+        res = self.client().get('categories/5/questions')
         data = json.loads(res.data)
 
-        question = Question.query.filter(Question.id == 9).one_or_none()
-
-        self.assertTrue(res.status_code, 200)
+        self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
-        self.assertTrue(data['id'])
+        self.assertTrue(data['questions'])
+        self.assertTrue(data['total_questions'])
+        self.assertTrue(data['current_category'])
+
+
+    def test_list_questions_by_category_without_result(self):
+        res = self.client().get('categories/50/questions')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], "resource not found")
+
+
+
+    def test_create_question(self):
+        res = self.client().post('/questions', json={"question": "my question 4", "answer": "my answer", "category": "2", "difficulty": "2"})
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertTrue(data['questions category'])
+
+
+
+    def test_question_search(self):
+        res = self.client().post('/questions/search', json={"searchTerm": "who"})
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertTrue(data['questions'])
+        self.assertTrue(data['total_questions'])
+
+
+    def test_question_search_no_match(self):
+        res = self.client().post('/questions/search', json={"searchTerm": "no match"})
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+
+
+
+
+
+
+    # def test_delete_questions(self):
+    #     res = self.client().delete('/questions/9')
+    #     data = json.loads(res.data)
+    #
+    #     question = Question.query.filter(Question.id == 9).one_or_none()
+    #
+    #     self.assertTrue(res.status_code, 200)
+    #     self.assertEqual(data['success'], True)
+    #     self.assertTrue(data['id'])
+
+
+    def test_delete_questions_not_exist(self):
+        res =self.client().delete('/questions/9')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], "resource not found")
+
+
 
 
 

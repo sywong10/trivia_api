@@ -185,25 +185,14 @@ def create_app(test_config=None):
     category = data.get('quiz_category')
 
     if category.get('id', None) != 0:
-      # print('category.get id is not true')
-      # print('category.get_id: {}'.format(category.get('id')))
-      # print('previous_question: {}'.format(previous_questions))
       selection = Question.query.filter(Question.category==category.get('id')).all()
     else:
-      # print('is true')
-      # print('category.get_id: {}'.format(category.get('id')))
-      # print('previous_question: {}'.format(previous_questions))
       selection = Question.query.all()
 
     all_questions = [ question.format() for question in selection if question.id not in previous_questions]
 
     if len(all_questions) != 0:
       question_to_ask = random.choice(all_questions)
-
-    # print('id: {}'.format(category))
-    # print('previous_questions: {}'.format(previous_questions))
-    # print('question_to_ask: {}'.format(question_to_ask))
-    # print('all_questions: {}'.format(all_questions))
 
     return jsonify({
       'Success': True,
